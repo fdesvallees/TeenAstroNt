@@ -14,7 +14,7 @@ double cot(double n)
 }
 
 // integer numeric conversion with error checking
-bool atoi2(char *a, int16_t *i)
+bool atoi2(char *a, int *i)
 {
   char    *conv_end;
   int32_t l = strtol(a, &conv_end, 10);
@@ -150,7 +150,7 @@ void HorTopoToEqu(double Azm, double Alt, double *HA, double *Dec, const double 
   double  t1 = sin(Azm);
   double  t2 = cos(Azm) * *sinLat - tan(Alt) * *cosLat;
   *HA = atan2(t1, t2) * Rad;
-  *HA = *HA + 180.;
+  *HA = haRange(*HA + 180.);
   *Dec = *Dec * Rad;
 }
 void HorAppToEqu(double Azm, double Alt, double *HA, double *Dec, const double *cosLat, const double *sinLat)

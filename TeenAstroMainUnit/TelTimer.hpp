@@ -1,7 +1,11 @@
 #pragma once
+#ifdef __arm__
 #include <Arduino.h>
+#endif
 #include <TimeLib.h>
 #include <TeenAstroMath.h>
+time_t getFreeRTOSTimer(void);
+
 
 class DateTimeTimers
 {
@@ -82,15 +86,15 @@ public:
 
   unsigned long getTimeStamp()
   {
-    return Teensy3Clock.get();
+    return getTime();
   }
   static time_t getTime()
   {
-    return Teensy3Clock.get();
+    return getFreeRTOSTimer();
   }
   void SetFromTimeStamp(unsigned long t)
   {
-    Teensy3Clock.set(t);
+//    Teensy3Clock.set(t);
     setTime(t);
     syncClock();
   }
@@ -108,7 +112,7 @@ public:
     m_Sitelongitude = Sitelongitude;
     time_t t = makeTime(t1);
     t += (long)(Sitetoff * 3600.0);
-    Teensy3Clock.set(t);
+//    Teensy3Clock.set(t);
     setTime(t);
     syncClock();
   }
@@ -345,5 +349,4 @@ private:
 
 };
 
-static DateTimeTimers rtk;
 

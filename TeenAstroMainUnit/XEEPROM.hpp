@@ -5,14 +5,33 @@
 
 // write int numbers into EEPROM at position i (2 bytes)
 
+#ifdef __arm__
+#define WRITE_BYTE write 
+#define READ_BYTE read 
+#endif
+#ifdef __ESP32__
+#define WRITE_BYTE writeByte
+#define READ_BYTE readByte
+#endif
+
+
 struct extendedEEPROM : EEPROMClass
 {
+  void write(int i, int j)
+  {
+    EEPROM.WRITE_BYTE(i, j);
+  }
+  int read(int i)
+  {
+    return EEPROM.READ_BYTE(i);
+  }
+
   void writeInt(int i, int j)
   {
     uint8_t *k = (uint8_t *)&j;
-    EEPROM.update(i + 0, *k);
+    EEPROM.WRITE_BYTE(i + 0, *k);
     k++;
-    EEPROM.update(i + 1, *k);
+    EEPROM.WRITE_BYTE(i + 1, *k);
   }
 
   // read int numbers from EEPROM at position i (2 bytes)
@@ -20,34 +39,34 @@ struct extendedEEPROM : EEPROMClass
   {
     uint16_t    j;
     uint8_t     *k = (uint8_t *)&j;
-    *k = EEPROM.read(i + 0);
+    *k = EEPROM.READ_BYTE(i + 0);
     k++;
-    *k = EEPROM.read(i + 1);
+    *k = EEPROM.READ_BYTE(i + 1);
     return j;
   }
 
   // write 4 byte variable into EEPROM at position i (4 bytes)
   void writeQuad(int i, byte *v)
   {
-    EEPROM.update(i + 0, *v);
+    EEPROM.WRITE_BYTE(i + 0, *v);
     v++;
-    EEPROM.update(i + 1, *v);
+    EEPROM.WRITE_BYTE(i + 1, *v);
     v++;
-    EEPROM.update(i + 2, *v);
+    EEPROM.WRITE_BYTE(i + 2, *v);
     v++;
-    EEPROM.update(i + 3, *v);
+    EEPROM.WRITE_BYTE(i + 3, *v);
   }
 
   // read 4 byte variable from EEPROM at position i (4 bytes)
   void readQuad(int i, byte *v)
   {
-    *v = EEPROM.read(i + 0);
+    *v = EEPROM.READ_BYTE(i + 0);
     v++;
-    *v = EEPROM.read(i + 1);
+    *v = EEPROM.READ_BYTE(i + 1);
     v++;
-    *v = EEPROM.read(i + 2);
+    *v = EEPROM.READ_BYTE(i + 2);
     v++;
-    *v = EEPROM.read(i + 3);
+    *v = EEPROM.READ_BYTE(i + 3);
   }
 
   // write String into EEPROM at position i
@@ -57,7 +76,7 @@ struct extendedEEPROM : EEPROMClass
       return false;
     for (int l1 = 0; l1 < (int)strlen(l) + 1; l1++)
     {
-      EEPROM.update(i + l1, l[l1]);
+      EEPROM.WRITE_BYTE(i + l1, l[l1]);
     }
     return true;
   }
@@ -69,7 +88,7 @@ struct extendedEEPROM : EEPROMClass
     bool validend = false;
     for (int l1 = 0; l1 < E_buffersize; l1++)
     {
-      l[l1] = EEPROM.read(i + l1);
+      l[l1] = EEPROM.READ_BYTE(i + l1);
       if (!l[l1])
       {
         validend = true;
